@@ -1,11 +1,8 @@
 package com.actitime.testscript;
 
-
-
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.Reporter;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import com.actitime.generic.BaseClass;
@@ -16,7 +13,8 @@ import com.actitime.pom.TaskListPage;
 @Listeners(com.actitime.generic.ListenersImplementation.class)
 public class CustomerModule extends BaseClass{
 	
-	@Test(priority=0, invocationCount = 1, groups = {"SmokeTest", "RegressionTest"})
+	
+	@Test(priority=0, invocationCount = 1)
 	public void AddCustomer() throws InterruptedException {
 		HomePage h = new HomePage(driver);
 		h.setTasks();
@@ -24,59 +22,44 @@ public class CustomerModule extends BaseClass{
 		t.getAddNewbtn().click();
 		t.getNewCustBtn().click();
 
-		WebElement popup = t.getNewCustPopup();
-		if (popup.isDisplayed()) {
-			System.out.println("Popup is displayed");
-		}
-		else {
-			System.out.println("Popup is not displayed");
-			Assert.fail();
-		}
-		t.getCustTbx().sendKeys("Demo Customer");
+		boolean popup = t.getNewCustPopup().isDisplayed();
+		Assert.assertTrue(popup); // To check if the popup is displayed or not
+		
+		t.getCustTbx().sendKeys("DemoCustomer"); 
 		t.getCustDesc().sendKeys("Demo description");
 		t.getCustDropdown().click();
 		t.getOurCompOpt().click();
-		t.getCreateCustBtn().click();
+		t.getCreateCustBtn().click();  // customer is created.
 		
-		// FInish the ones below
-		driver.findElement(By.xpath("(//input[@placeholder='Start typing name ...'])[1]")).sendKeys("DemoCustomer");
-		Thread.sleep(1000);
-		WebElement res = driver.findElement(By.xpath("//span[text()='DemoCustomer']"));
-		Thread.sleep(1000);
+		t.getSearchTbx().sendKeys("DemoCustomer"); Thread.sleep(1000);
+		WebElement createdUser = t.getCreatedUser(); Thread.sleep(1000);
 
-		if (res.isDisplayed()) {
-			System.out.println("Customer created");
-		}
+		if (createdUser.isDisplayed() && createdUser.getText().equals("DemoCustomer")) {
+			Reporter.log("Customer created, test passed", true); }
 		else {
-			System.out.println("Customer not created");
-		}
+			Reporter.log("Customer not created, test Failed", true);
+			Assert.fail(); }
 	}
 	
 	
 	@Test(priority=1, dependsOnMethods = {"AddCustomer"})
 	public void deleteCustomer() throws InterruptedException {
+		HomePage h = new HomePage(driver);
+		h.setTasks();  // switching to task list page
 		
-		driver.findElement(By.linkText("TASKS")).click(); Thread.sleep(1000);
-		driver.findElement(By.xpath("(//input[@placeholder='Start typing name ...'])[1]")).sendKeys("DemoCustomer");
+		TaskListPage t = new TaskListPage(driver);
+		t.getSearchTbx().clear();
+		t.getSearchTbx().sendKeys("DemoCustomer");
+		t.getEditCustomerBtn().click(); Thread.sleep(1000);
+		t.getActionBtn().click(); Thread.sleep(1000);
+		t.getDeleteBtn().click(); Thread.sleep(1000);
+		t.getDeleteConfirmationBtn().click(); Thread.sleep(1000); // customer is deleted		
+		
+		t.getSearchTbx().clear();
+		t.getSearchTbx().sendKeys("DemoCustomer"); // searching for the deleted customer
 		Thread.sleep(1000);
-		driver.findElement(By.xpath("//span[@class='highlightToken']/../..//div[@class='editButton available']")).click();
-		Thread.sleep(1000);
-		
-		driver.findElement(By.xpath("(//div[@class='actionButton'])[1]")).click(); Thread.sleep(1000);
-		driver.findElement(By.xpath("(//div[text()='Delete'])[1]")).click(); Thread.sleep(1000);
-		driver.findElement(By.id("customerPanel_deleteConfirm_submitBtn")).click(); Thread.sleep(1000);
-		
-		
-		driver.findElement(By.xpath("(//input[@placeholder='Start typing name ...'])[1]")).sendKeys("DemoCustomer");
-		Thread.sleep(1000);
-		WebElement res = driver.findElement(By.xpath("//div[text()='There are no customers or projects']"));
-		Thread.sleep(1000);
-		
-		if (res.isDisplayed()) {
-			System.out.println("Customer deleted");
-		}
-		else {
-			System.out.println("Customer not deleted");
-		}
+		WebElement res = t.getNoResultMsg();
+		Assert.assertTrue(res.isDisplayed());
+		Reporter.log("Customer deleted successfully, test passed", true);
 	}	
 }

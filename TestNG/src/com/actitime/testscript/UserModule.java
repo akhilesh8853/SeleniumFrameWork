@@ -15,29 +15,24 @@ import com.actitime.pom.UserListPage;
 @Listeners(com.actitime.generic.ListenersImplementation.class)
 public class UserModule extends BaseClass{
 	
-	UserListPage u = new UserListPage(driver); // creating object of the Users page
-	HomePage h = new HomePage(driver);// creating object of the Homepage
-	
-	
 	@Test(priority = 0)
 	public void createUser() throws InterruptedException {
+		HomePage h = new HomePage(driver);
 		h.setUsers(); // clicking on the Users tab
-		Thread.sleep(1000);
+		
+		UserListPage u = new UserListPage(driver); 
 		u.getAddUserBtn().click(); // clicking on add user button
 		Thread.sleep(1000);
+		
+		Assert.assertTrue(u.getUserPopup().isDisplayed());  // checking if the popup is displayed or not
 
-		WebElement popup = u.getUserPopup(); // checking if the user popup is displayed
-		Thread.sleep(1000);
-
-		Assert.assertTrue(popup.isDisplayed());  // checking if the popup is displayed or not
-
-		u.getFirstNameTbx().sendKeys("Virat"); 		Thread.sleep(1000);
-		u.getLastNameTbx().sendKeys("Kohli"); Thread.sleep(1000);
-		u.getEmailTbx().sendKeys("kohli@gmail.com"); Thread.sleep(1000);
-		u.getCreatedUser().sendKeys("VIRAT@123"); Thread.sleep(1000);
-		u.getPasswordTbx().sendKeys("virat@123"); Thread.sleep(1000);
-		u.getPasswordCopyTbx().sendKeys("virat@123"); Thread.sleep(1000);
-		u.getAddUserBtn().click();	Thread.sleep(1000);	// user is created 
+		u.getFirstNameTbx().sendKeys("Virat"); 		
+		u.getLastNameTbx().sendKeys("Kohli"); 
+		u.getEmailTbx().sendKeys("kohli@gmail.com");
+		u.getUsernameTbx().sendKeys("ViratKohli");
+		u.getPasswordTbx().sendKeys("virat@123"); 
+		u.getPasswordCopyTbx().sendKeys("virat@123");
+		u.getCreateUserBtn().click();   // user is created 
 
 		u.getSearchTbx().sendKeys("Virat"); Thread.sleep(1000);// searching for the user
 		WebElement res = u.getCreatedUser();Thread.sleep(1000);
@@ -51,27 +46,19 @@ public class UserModule extends BaseClass{
 	}
 
 
-	@Test(priority=2)
+	@Test(priority=2, enabled = true)
 	public void deleteUser() throws InterruptedException {
-		
+		HomePage h = new HomePage(driver);
 		h.setUsers(); // clicking on the Users tab
-		u.getSearchTbx().sendKeys("Virat"); // searching for the user
-		WebElement res = u.getNoUserMsg();
-		if (res.isDisplayed())  //checking if the user is pressent in the lsit or not
-			Reporter.log("User is present");
-		else 
-			Reporter.log("User is not present");
 		
-		res.click();
-		
-		if (u.getUserPopup().isDisplayed()) // verifyig if the popup is displayed or not
-			System.out.println("Popup is displayed");
-		else
-			System.out.println("Popup is not displayed");
+		UserListPage u = new UserListPage(driver); 
+		u.getSearchTbx().sendKeys("Virat Kohli"); // searching for the user
+		u.getCreatedUser().click();Thread.sleep(1000);
 		
 		u.getDeleteUserBtn().click();
 		driver.switchTo().alert().accept(); Thread.sleep(1000);
-
+		
+		u.getSearchTbx().clear();
 		u.getSearchTbx().sendKeys("Virat"); Thread.sleep(2000);
 		WebElement res2 = u.getNoUserMsg();
 		

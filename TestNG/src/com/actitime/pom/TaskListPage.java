@@ -33,7 +33,29 @@ public class TaskListPage {
 
 	@FindBys({@FindBy(xpath = "//a[text()='All Customers']/../../div[@class='title ellipsis']"),
 		@FindBy(xpath = "//a[text()='All Customers']/following::div[@class='title ellipsis'][1]")})
-	private WebElement createdCust;
+	private WebElement createdCust22;
+	
+	@FindBy(xpath = "//span[@class='highlightToken']/../..//div[@class='editButton available']")
+	private WebElement customerEditBtn;
+	
+	@FindBy(xpath = "//div[@id='cpTreeBlock']//input[@placeholder='Start typing name ...']")
+	private WebElement searchTbx;
+	
+	@FindBy(className = "highlightToken")
+	private WebElement createdUser;
+	
+	@FindBy(xpath = "//div[contains(@class, 'edit_customer')]//div[@class='actions']")
+	private WebElement actionBtn;
+	
+	@FindBy(xpath = "//div[contains(@class, 'edit_customer')]//div[text()='Delete']")
+	private WebElement deleteBtn;
+	
+	@FindBy(id = "customerPanel_deleteConfirm_submitBtn")
+	private WebElement deleteConfirmationBtn;
+	
+	@FindBy(xpath = "//div[text()='There are no customers or projects']")
+	private WebElement noResultMsg;
+	
 
 	public TaskListPage(WebDriver driver) {
 		PageFactory.initElements(driver, this);
@@ -71,7 +93,32 @@ public class TaskListPage {
 		return createCustBtn;
 	}
 
-	public WebElement getCreatedCust() {
-		return createdCust;
+	public WebElement getEditCustomerBtn() {
+		return customerEditBtn;
 	}
+	
+	public WebElement getSearchTbx() {
+		return searchTbx;
+	}
+	
+	public WebElement getCreatedUser() {
+		return createdUser;
+	}
+	
+	public WebElement getActionBtn() {
+		return actionBtn;
+	}
+	
+	public WebElement getDeleteBtn() {
+		return deleteBtn;
+	}
+	
+	public WebElement getDeleteConfirmationBtn() {
+		return deleteConfirmationBtn;
+	}
+	
+	public WebElement getNoResultMsg() {
+		return noResultMsg;
+	}
+	
 }
