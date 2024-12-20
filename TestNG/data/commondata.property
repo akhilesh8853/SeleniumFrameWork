@@ -1,0 +1,6 @@
+{
+	un: admin
+	pw: manager
+	url: http://localhost/login.do
+	excelPath: ./data/testScript.xlsx
+}
